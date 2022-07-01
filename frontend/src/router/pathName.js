@@ -2,5 +2,8 @@ export const pathName={
     home:"/",
     createBlog:"/write",
     setting:"/settings",
-    detailPost:"/posts"
+    detailPost:"/posts",
+    login:"/login",
+    register:"/register",
+    reretPassword:"/reset_password",
 }
