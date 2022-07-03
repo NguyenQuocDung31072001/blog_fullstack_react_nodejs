@@ -47,7 +47,7 @@ const login = async (req, res) => {
   try {
     const account = await Account.findOne({ email: req.body.email });
     if (!account) {
-      return res.status(400).json({ message: "email invalid!" });
+      return res.json({ message: "email invalid!" });
     }
     const hash = await bcrypt.compare(req.body.password, account.password);
     if (!hash) {

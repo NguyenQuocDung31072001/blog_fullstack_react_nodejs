@@ -1,9 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Input, Row, Col } from "antd";
 import { pathName } from "../router/pathName";
 import { Link } from "react-router-dom";
-const LoginPages = () => {
+import { loginApi } from "../api/auth.apiRequest";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/accountSlices";
 
+const LoginPages = () => {
+  const [email,setEmail]=useState('')
+  const [password,setPassword]=useState('')
+  const dispatch=useDispatch()
+
+  const loginSubmit=()=>{
+    ;(async function(){
+      const res=await loginApi({email,password})
+      console.log("res from login pages : ", res.data)
+      const dataSaveRedux={
+        id:res.data._id,
+        username:res.data.username,
+        email:res.data.email,
+        password:res.data.password,
+        avatar_url:res.data.avatar,
+      }
+      dispatch(login(dataSaveRedux))
+    })()
+  }
   return (
     <div className="w-full mt-[100px]">
       <div className="w-[445px] h-[475px] flex flex-col items-center m-auto bg-white shadow-2xl p-8">
@@ -25,6 +46,7 @@ const LoginPages = () => {
                     borderTopRightRadius: 10,
                     borderBottomRightRadius: 10,
                   }}
+                  onChange={e=>setEmail(e.target.value)}
                 />
               </Col>
             </div>
@@ -45,6 +67,7 @@ const LoginPages = () => {
                     borderTopRightRadius: 10,
                     borderBottomRightRadius: 10,
                   }}
+                  onChange={e=>setPassword(e.target.value)}
                 />
               </Col>
             </div>
@@ -52,7 +75,8 @@ const LoginPages = () => {
           <div className="w-full h-[15px]" />
           <Row>
             <Col span={24}>
-              <button className="bg-blue-500 w-full h-[45px] text-white rounded-[10px]">
+              <button className="bg-blue-500 w-full h-[45px] text-white rounded-[10px]" 
+              onClick={loginSubmit}>
                 Login
               </button>
             </Col>

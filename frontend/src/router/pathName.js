@@ -5,5 +5,6 @@ export const pathName={
     detailPost:"/posts",
     login:"/login",
     register:"/register",
+    logout:"/logout",
     reretPassword:"/reset_password",
 }

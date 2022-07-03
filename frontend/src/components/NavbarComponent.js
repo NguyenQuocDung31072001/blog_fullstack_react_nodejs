@@ -1,8 +1,8 @@
 import { Row, Col } from "antd";
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { pathName } from "../router/pathName";
-
+import { useSelector } from "react-redux";
 const NavigateRouter = [
   {
     path: pathName.home,
@@ -21,12 +21,20 @@ const NavigateRouter = [
     name: "WRITE",
   },
   {
-    path: "",
+    path: pathName.logout,
     name: "LOGOUT",
   },
 ];
 
 const NavbarComponent = () => {
+  const currentUser=useSelector(state=>state.account)
+  const navigate=useNavigate()
+  const [avatar,setAvatar]=useState()
+  useEffect(()=>{
+    if(currentUser.id){
+      setAvatar(currentUser.avatar_url)
+    }
+  },[currentUser])
   return (
     <div className="bg-white">
     <Row className="h-[50px]">
@@ -66,13 +74,21 @@ const NavbarComponent = () => {
       </Col>
       <Col  span={6}>
         <div className="w-full h-full flex items-center justify-center">
+          {!currentUser.id && (
+            <Link to={pathName.login}>
+              Login
+            </Link>
+
+          )}
+          {currentUser.id && (
           <Link to={pathName.setting}>
             <img
               className="w-[40px] h-[40px] object-cover rounded-full"
-              src="https://images.pexels.com/photos/1858175/pexels-photo-1858175.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
+              src={avatar}
               alt=""
             />
           </Link>
+          )}
           <div className="mx-2 text-[20px]">
             <i className="fa-solid fa-magnifying-glass cursor-pointer"></i>
           </div>
