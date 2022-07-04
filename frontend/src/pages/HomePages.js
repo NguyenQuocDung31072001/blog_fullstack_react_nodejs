@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col } from "antd";
 import dataPost from "../data/postData.json";
 import PostComponent from "../components/PostComponent";
 import AboutComponent from "../components/AboutComponent";
+import { getAllstory } from "../api/story.apiRequest";
 
 const HomePages = () => {
-  const [data, setData] = useState(dataPost);
+  const [data, setData] = useState([]);
+  useEffect(()=>{
+    (async function(){
+      const allStory=await getAllstory()
+      setData(allStory.allStory)
+    })()
+  },[])
   return (
     <div>
       <header className="mt-[60px] mb-[15px] w-full h-[539px]  flex flex-col justify-end items-center relative">
@@ -27,13 +34,14 @@ const HomePages = () => {
         <Row>
           <Col className="" span={16}>
             <div className="flex flex-wrap">
-              {data.map((d, index) => {
+              {data.length>0 && data.map((d, index) => {
                 return (
                   <PostComponent
                     key={index}
+                    id={d._id}
                     image={d.image}
                     title={d.title}
-                    time={d.time}
+                    time={d.updatedAt}
                     description={d.description}
                   />
                 );

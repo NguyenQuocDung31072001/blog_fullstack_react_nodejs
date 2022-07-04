@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input, Row, Col } from "antd";
 import { pathName } from "../router/pathName";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginApi } from "../api/auth.apiRequest";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/accountSlices";
@@ -10,19 +10,23 @@ const LoginPages = () => {
   const [email,setEmail]=useState('')
   const [password,setPassword]=useState('')
   const dispatch=useDispatch()
+  const navigate=useNavigate()
 
   const loginSubmit=()=>{
     ;(async function(){
       const res=await loginApi({email,password})
       console.log("res from login pages : ", res.data)
-      const dataSaveRedux={
-        id:res.data._id,
-        username:res.data.username,
-        email:res.data.email,
-        password:res.data.password,
-        avatar_url:res.data.avatar,
+      if(res.data){
+        const dataSaveRedux={
+          id:res.data._id,
+          username:res.data.username,
+          email:res.data.email,
+          password:res.data.password,
+          avatar_url:res.data.avatar,
+        }
+        dispatch(login(dataSaveRedux))
+        navigate('/')
       }
-      dispatch(login(dataSaveRedux))
     })()
   }
   return (

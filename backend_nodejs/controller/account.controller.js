@@ -17,7 +17,7 @@ const register = async (req, res) => {
     const _hash = await bcrypt.hash(req.body.password, saltRounds);
 
     const account = new Account({
-      _id: new mongoose.Types.ObjectId(),
+      // _id: new mongoose.Types.ObjectId(),
       username: req.body.username,
       email: req.body.email,
       password: _hash,
@@ -51,7 +51,7 @@ const login = async (req, res) => {
     }
     const hash = await bcrypt.compare(req.body.password, account.password);
     if (!hash) {
-      return res.status(400).json({ message: "wrong password" });
+      return res.json({ message: "wrong password" });
     }
     const accessToken = generateAccessToken(account._id);
     return res.status(200).json({
@@ -97,6 +97,8 @@ const updateAvatar = async (req, res) => {
     if (!req.file) {
       return;
     }
+    console.log("req body file ", req.body.file)
+
     const account=await Account.findById(req.params.id)
     account.avatar=req.file.path
     await account.save()

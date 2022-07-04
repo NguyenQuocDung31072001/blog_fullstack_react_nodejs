@@ -17,10 +17,10 @@ const storage = new CloudinaryStorage({
     cb(null, file.originalname);
   },
 });
-
-
-
+const deleteImage=(id)=>{
+  cloudinary.uploader.destroy(id, function(result) { console.log(result) });
+}
 const uploadCloud = multer({ storage });
 
-module.exports={cloudinary,uploadCloud}
+module.exports={cloudinary,uploadCloud,deleteImage}
 // module.exports = ;

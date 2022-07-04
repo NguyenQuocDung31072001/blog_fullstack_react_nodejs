@@ -1,48 +1,65 @@
 import React, { useState } from "react";
 import { Row, Col } from "antd";
 import AboutComponent from "../components/AboutComponent";
-import { uploadAvatar, updateAccount } from "../api/apiRequest";
-import { useSelector,useDispatch } from "react-redux";
+import { uploadAvatar, updateAccount } from "../api/account.apiRequest";
+import { useSelector, useDispatch } from "react-redux";
 import { update } from "../redux/accountSlices";
 
 const SettingPages = () => {
   const currentAccount = useSelector((state) => state.account);
-  console.log("currentAccount ", currentAccount);
   const dispatch=useDispatch()
-
   const [username, setUsername] = useState(currentAccount.username);
   const [email, setEmail] = useState(currentAccount.email);
   const [password, setPassword] = useState(currentAccount.password);
+  const [avatarUrl, setAvatarUrl] = useState(currentAccount.avatar_url);
   const [fileUpload, setFileUpload] = useState();
-  // const [avatarUrl, setAvatarUrl] = useState(currentAccount.avatar_url);
 
   const handleUpdateAccount = () => {
     const id = currentAccount.id;
-    if(fileUpload){
+    if (fileUpload) {
+      console.log("alo1")
       const uploadData = new FormData();
       uploadData.append("file", fileUpload, "file");
-      
+
       const updateAccountApi = updateAccount({ id, username, email, password });
-      const updateAvatar = uploadAvatar(uploadData);
-  
-      Promise.all([updateAccountApi, updateAvatar]).then(([_updateAccountApi,_updateAvatar]) => {
-        console.log("_updateAccountApi ",_updateAccountApi)
-        console.log("_updateAvatar ",_updateAvatar)
-        // dispatch(update())
-      });
-    }
-    else{
-      ;(async function(){
-        const updateAccountApi = await updateAccount({ id, username, email, password });
-        console.log('updateAccountApi',updateAccountApi)
-      })()
+      const updateAvatar = uploadAvatar({id,uploadData});
+      console.log("alo2")
+      Promise.all([updateAccountApi, updateAvatar]).then(
+        ([dataUpdateAccount, dataUpdateAvatar]) => {
+          console.log("_updateAccountApi ", dataUpdateAccount);
+          console.log("_updateAvatar ", dataUpdateAvatar);
+          const dataUpdateRedux={
+            id:dataUpdateAccount._id,
+            username:dataUpdateAccount.username,
+            email:dataUpdateAccount.email,
+            password:dataUpdateAccount.password,
+            avatar_url:dataUpdateAvatar.avatar_url
+          }
+          console.log("alo3")
+          dispatch(update({dataUpdateRedux}))
+        }
+      );
+    } else {
+      (async function () {
+        const data = await updateAccount({
+          id,
+          username,
+          email,
+          password,
+        });
+        console.log("updateAccountApi", data);
+        const dataUpdateRedux={
+          id:data._id,
+          username:data.username,
+          email:data.email,
+          password:data.password,
+          avatar_url:avatarUrl
+        }
+        dispatch(update({dataUpdateRedux}))
+      })();
     }
   };
-  const handleFileUpload = () => {
-    const uploadData = new FormData();
-    uploadData.append("file", fileUpload, "file");
-    uploadAvatar(uploadData);
-  };
+
   return (
     <div className="mx-4 mt-[60px]">
       <Row>
@@ -58,7 +75,7 @@ const SettingPages = () => {
             <div className="flex items-center">
               <img
                 className="w-[70px] h-[70px] object-cover rounded-[20px]"
-                src={currentAccount.avatar_url}
+                src={fileUpload ? URL.createObjectURL(fileUpload) : avatarUrl}
                 alt=""
               />
               <label htmlFor="inputImg">

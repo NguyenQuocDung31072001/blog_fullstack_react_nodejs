@@ -1,8 +1,9 @@
 import axiosConfig from "../config/axiosConfig"
 
 export const updateAccount=async({id,username,email,password})=>{
+    console.log("id ", id)
     try {
-        const res=await axiosConfig.put("/account/update/62be7e05072ce76e5d5cde63",{
+        const res=await axiosConfig.put(`/account/update/${id}`,{
             username:username,
             email:email,
             password:password
@@ -14,11 +15,13 @@ export const updateAccount=async({id,username,email,password})=>{
         console.log(error.message)
     }
 }
-export const uploadAvatar=async(fileUpload)=>{
+export const uploadAvatar=async({id,fileUpload})=>{
+    console.log("id ", id)
     try {
-        const res=await axiosConfig.post("/account/upload_avatar/62be7e05072ce76e5d5cde63",fileUpload)
+        const res=await axiosConfig.post(`/account/upload_avatar/${id}`,fileUpload)
+        console.log(res.data)
         return res.data
-
+;
     } catch (error) {
         console.log(error.message)
     }
