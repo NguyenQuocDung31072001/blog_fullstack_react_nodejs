@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Row, Col } from "antd";
 import { postNewStory } from "../api/story.apiRequest";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { pathName } from "../router/pathName";
 
 const CreateNewPostPages = () => {
   const currentUser = useSelector((state) => state.account);
+  const navigate=useNavigate()
   // console.log(currentUser.id)
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -28,6 +31,7 @@ const CreateNewPostPages = () => {
         id_account,
         uploadData
       });
+      navigate(pathName.detailPost_Name+res.newStory._id)
       console.log(res);
     })();
   };

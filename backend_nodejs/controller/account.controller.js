@@ -1,11 +1,10 @@
 require("dotenv").config();
 const Account = require("../model/account.model");
-const cloudinary = require("../configs/cloudinary.config");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const saltRounds = 10;
-
+const { deleteImage } = require("../configs/cloudinary.config");
 const register = async (req, res) => {
   //username, email, password
   try {
@@ -47,11 +46,11 @@ const login = async (req, res) => {
   try {
     const account = await Account.findOne({ email: req.body.email });
     if (!account) {
-      return res.json({ message: "email invalid!" });
+      return res.json({component:"email", message: "email invalid!" });
     }
     const hash = await bcrypt.compare(req.body.password, account.password);
     if (!hash) {
-      return res.json({ message: "wrong password" });
+      return res.json({component:"password", message: "wrong password" });
     }
     const accessToken = generateAccessToken(account._id);
     return res.status(200).json({
@@ -70,49 +69,65 @@ const logout = async (req, res) => {
 };
 
 const updateAccount = async (req, res) => {
+  console.log(req.body)
   // params id, body : username, email, password
   try {
     const account = await Account.findById(req.params.id);
     if (!account) {
       return res.status(404).json({ message: "inValid Account" });
     }
-    if (req.file && account.prevAvatar) {
-      console.log("delete prev avatar")
-      cloudinary.uploader.destroy(account.prevAvatar, function (result) {
-        console.log(result);
-      });
+    if (req.file) {
+      if (account.prevAvatar) {
+        deleteImage(account.prevAvatar);
+      }
+      account.avatar = req.file.path;
+      account.prevAvatar = req.file.filename;
     }
-    const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
+    if(req.body.password){
+      const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
+      account.password = hashPassword;
+    }
     account.username = req.body.username;
     account.email = req.body.email;
-    account.password = hashPassword;
     await account.save();
-    return res.status(200).json({message:"update success",data:account})
+    console.log('req.body.password ',req.body.password)
+    return res.status(200).json(account);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.json({ message: error.message });
   }
 };
-const updateAvatar = async (req, res) => {
+const checkPassword = async (req, res) => {
+  console.log("req body password is ",req.body.password)
+  //params id, body password
   try {
-    if (!req.file) {
-      return;
+    const account = await Account.findById(req.params.id);
+    const hash = await bcrypt.compare(req.body.password, account.password);
+    if (!hash) {
+      return res.json({ message: "password incorrect!", status: false });
     }
-    console.log("req body file ", req.body.file)
-
-    const account=await Account.findById(req.params.id)
-    account.avatar=req.file.path
-    await account.save()
-
-    return res.status(200).json({ avatar_url: req.file.path });
+    return res.json({ message: "password correct", status: true });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.json({ message: error.message, status: false });
   }
 };
+// const changePassword = async (req, res) => {
+//   //params id, body new_password
+//   try {
+//     const account = await Account.findById(req.params.id);
+//     const _hash = await bcrypt.hash(req.body.new_password, saltRounds);
+//     account.password = _hash;
+//     await account.save();
+//     return res.json(account);
+//   } catch (error) {
+//     return res.json({ message: error.message });
+//   }
+// };
+
 const deleteAccount = async (req, res) => {
   //params id
   try {
-    const account=await Account.findByIdAndDelete(req.params.id)
-    return res.status(200).json({message:"delete success"})
+    const account = await Account.findByIdAndDelete(req.params.id);
+    return res.status(200).json({ message: "delete success" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -123,6 +138,8 @@ module.exports = {
   login,
   logout,
   updateAccount,
-  updateAvatar,
+  checkPassword,
+  // changePassword,
+  // updateAvatar,
   deleteAccount,
 };

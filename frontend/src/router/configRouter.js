@@ -11,36 +11,36 @@ export const configRouter=[
     {
         path:pathName.home,
         pages:<HomePages/>,
-        privated:"false"
+        privated:false
     },
     {
         path:pathName.createBlog,
         pages:<CreateNewPostPages/>,
-        privated:"false"
+        privated:true
     },
     {
         path:pathName.detailPost,
         pages:<DetailPostPages/>,
-        privated:"false"
+        privated:false
     },
     {
         path:pathName.setting,
         pages:<SettingPages/>,
-        privated:"false"
+        privated:true
     },
     {
         path:pathName.login,
         pages:<LoginPages/>,
-        privated:"false"
+        privated:false
     },
     {
         path:pathName.register,
         pages:<RegisterPages/>,
-        privated:"false"
+        privated:false
     },
     {
         path:pathName.logout,
         pages:<LogoutPages/>,
-        privated:"false"
+        privated:true
     },
 ]

@@ -18,7 +18,7 @@ const storage = new CloudinaryStorage({
   },
 });
 const deleteImage=(id)=>{
-  cloudinary.uploader.destroy(id, function(result) { console.log(result) });
+  cloudinary.uploader.destroy(id, function(result) { console.log('result is ',result) });
 }
 const uploadCloud = multer({ storage });
 

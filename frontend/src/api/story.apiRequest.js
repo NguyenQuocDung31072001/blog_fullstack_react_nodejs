@@ -46,20 +46,9 @@ export const postNewStory = async ({ id_account, uploadData }) => {
   }
 };
 
-export const updateStory = async (
-  id,
-  image,
-  title,
-  description,
-  detailDescription
-) => {
+export const updateStory = async ({ id, uploadData }) => {
   try {
-    const res = await axiosConfig.put(`/story/story_account/${id}`, {
-      image: image,
-      title: title,
-      description: description,
-      detailDescription: detailDescription,
-    });
+    const res = await axiosConfig.put(`/story/update_story/${id}`, uploadData);
     console.log(res.data);
     return res.data;
   } catch (error) {

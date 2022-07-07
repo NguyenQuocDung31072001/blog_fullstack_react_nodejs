@@ -7,12 +7,13 @@ router.post("/register", accountController.register);
 router.post("/login", accountController.login);
 router.post("/logout", accountController.logout);
 
-router.post(
-  "/upload_avatar/:id",
+router.put(
+  "/update_account/:id",
   uploadCloud.single("file"),
-  accountController.updateAvatar
+  accountController.updateAccount
 );
-router.put("/update/:id", accountController.updateAccount);
+router.post('/check_password/:id',accountController.checkPassword)
+// router.post('/change_password/:id',accountController.changePassword)
 router.delete('/delete/:id',accountController.deleteAccount)
 
 module.exports = router;

@@ -3,7 +3,6 @@ import { pathName } from "../router/pathName";
 import {Link} from "react-router-dom"
 
 const PostComponent = ({id, image, title, time, description }) => {
-  console.log("time is ", time)
   return (
     <div className="w-[385px] mx-6 my-2 flex flex-col items-center">
       <img className="w-full h-[280px] object-cover" src={image} alt="" />

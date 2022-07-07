@@ -25,7 +25,7 @@ const getOneStory = async (req, res) => {
   // params id
   try {
     const story=await Story.findById(req.params.id)
-    console.log("story is ",story)
+    // console.log("story is ",story)
     return res.status(200).json(story);
   } catch (error) {
     return res.json({ error: error.message });
@@ -70,8 +70,9 @@ const updateStory = async (req, res) => {
       if(story.prevImage){
         deleteImage(story.prevImage)
       }
+      console.log("req.file update is ",req.file)
       story.image=req.file.path
-      story.prevImage=req.file.path
+      story.prevImage=req.file.filename
       story.title=req.body.title
       story.description=req.body.description
       story.detailDescription=req.body.detailDescription  

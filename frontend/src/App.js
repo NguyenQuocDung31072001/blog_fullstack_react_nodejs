@@ -2,6 +2,8 @@ import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { configRouter } from "./router/configRouter";
 import NavbarComponent from "./components/NavbarComponent";
+import ProtectedRouter from "./router/protectedRouter";
+import TestForm from "./pages/TestForm";
 
 function App() {
   return (
@@ -13,8 +15,19 @@ function App() {
         <div className="mt-[50px] "></div>
         <Routes>
           {configRouter.map((r, index) => {
-            return <Route key={index} path={r.path} element={r.pages} />;
+            return (
+              <Route
+                key={index}
+                path={r.path}
+                element={
+                  <ProtectedRouter protect={r.privated}>
+                    {r.pages}
+                  </ProtectedRouter>
+                }
+              />
+            );
           })}
+          <Route path="/test" element={<TestForm/>}/>
         </Routes>
       </BrowserRouter>
     </div>
