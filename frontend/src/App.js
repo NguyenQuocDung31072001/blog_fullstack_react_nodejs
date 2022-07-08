@@ -4,8 +4,17 @@ import { configRouter } from "./router/configRouter";
 import NavbarComponent from "./components/NavbarComponent";
 import ProtectedRouter from "./router/protectedRouter";
 import TestForm from "./pages/TestForm";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { logout } from "./redux/accountSlices";
 
 function App() {
+  // const dispatch=useDispatch()
+  // useEffect(()=>{
+  //   setTimeout(()=>{
+  //     dispatch(logout())
+  //   },[5000])
+  // },[])
   return (
     <div className="">
       <BrowserRouter>
@@ -27,7 +36,7 @@ function App() {
               />
             );
           })}
-          <Route path="/test" element={<TestForm/>}/>
+          {/* <Route path="/test" element={<TestForm/>}/> */}
         </Routes>
       </BrowserRouter>
     </div>

@@ -12,8 +12,7 @@ router.put(
   uploadCloud.single("file"),
   accountController.updateAccount
 );
-router.post('/check_password/:id',accountController.checkPassword)
-// router.post('/change_password/:id',accountController.changePassword)
+router.put('/change_password/:id',accountController.changePassword)
 router.delete('/delete/:id',accountController.deleteAccount)
 
 module.exports = router;

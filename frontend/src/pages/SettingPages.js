@@ -1,42 +1,66 @@
 import React, { useState } from "react";
 import { Row, Col } from "antd";
 import AboutComponent from "../components/AboutComponent";
-import {
-  uploadAvatar,
-  updateAccount,
-  checkPassword,
-} from "../api/account.apiRequest";
+import { updateAccountApi, changePasswordApi } from "../api/account.apiRequest";
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../redux/accountSlices";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { openNotification } from "../util/Notification.util";
+const schema1 = yup
+  .object({
+    username: yup.string().required(),
+    email: yup.string().required(),
+  })
+  .required();
+
+const schema2 = yup
+  .object({
+    old_password: yup.string().required(),
+    new_password: yup.string().required(),
+    confirm_new_password: yup.string().required(),
+  })
+  .required();
 
 const SettingPages = () => {
   const currentAccount = useSelector((state) => state.account);
   const dispatch = useDispatch();
-  const [username, setUsername] = useState(currentAccount.username);
-  const [email, setEmail] = useState(currentAccount.email);
-  const [password, setPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(currentAccount.avatar_url);
   const [fileUpload, setFileUpload] = useState();
-  const [activeChangePassword, setActiveChangePassword] = useState(false);
-
   const id = currentAccount.id;
 
-  const handleUpdateAccount = () => {
+  const {
+    register: register1,
+    handleSubmit: handleSubmit1,
+    formState: { errors: errors1 },
+  } = useForm({
+    resolver: yupResolver(schema1),
+    defaultValues:{
+      username:currentAccount.username,
+      email:currentAccount.email
+    }
+  });
+  const {
+    register: register2,
+    handleSubmit: handleSubmit2,
+    setError:setError2,
+    setValue:setValue2,
+    formState: { errors: errors2 },
+  } = useForm({
+    resolver: yupResolver(schema2),
+  });
+
+  const handleUpdateAccount = (data) => {
     const uploadData = new FormData();
     if (fileUpload) {
       uploadData.append("file", fileUpload, "file");
     }
-    uploadData.append("username", username);
-    uploadData.append("email", email);
-    if (newPassword) {
-      if (newPassword === confirmNewPassword) {
-        uploadData.append("password", newPassword);
-      }
-    }
+    uploadData.append("username", data.username);
+    uploadData.append("email", data.email);
+
     (async function () {
-      const dataUpdate = await updateAccount({ id, uploadData });
+      const dataUpdate = await updateAccountApi({ id, uploadData });
       console.log("data update ", dataUpdate);
 
       const dataUpdateRedux = {
@@ -48,11 +72,45 @@ const SettingPages = () => {
       dispatch(update(dataUpdateRedux));
     })();
   };
-  const handleCheckPassword = () => {
+  const handleChangePassword = (data) => {
+    if(data.new_password.length<6){
+      setError2('new_password',{
+        type:'custom',
+        message:'password at least 6 character'
+      })
+      return
+    }
+    if(data.new_password!==data.confirm_new_password){
+      setError2('confirm_new_password',{
+        type:'custom',
+        message:'password not match'
+      })
+      return
+    }
+    console.log("data is ", data);
+    let old_password = data.old_password;
+    let new_password = data.new_password;
+
     (async function () {
-      const result = await checkPassword({ id, password });
-      console.log("result is ", result);
-      setActiveChangePassword(result);
+      const result = await changePasswordApi({
+        id,
+        old_password,
+        new_password,
+      });
+      if (result.status === "old_password") {
+        let message=result.message
+        setError2('old_password',{
+          type:"custom",
+          message:message
+        })
+        return
+      }
+      if(result.status==='ok'){
+        openNotification('success','Notification message!','You change password successfully!')
+      }
+      setValue2('old_password','')
+      setValue2('new_password','')
+      setValue2('confirm_new_password','')
     })();
   };
 
@@ -67,96 +125,102 @@ const SettingPages = () => {
             </p>
           </div>
           <div>
-              <p className="text-[20px] font-serif">Profile Picture</p>
-              <div className="flex items-center">
-                <img
-                  className="w-[70px] h-[70px] object-cover rounded-[20px]"
-                  src={fileUpload ? URL.createObjectURL(fileUpload) : avatarUrl}
-                  alt=""
+            <p className="text-[20px] font-serif">Profile Picture</p>
+            <div className="flex items-center">
+              <img
+                className="w-[70px] h-[70px] object-cover rounded-[20px]"
+                src={fileUpload ? URL.createObjectURL(fileUpload) : avatarUrl}
+                alt=""
+              />
+              <label htmlFor="inputImg">
+                <i className="fa-solid fa-circle-user text-[30px] text-rose-500 mx-4"></i>
+                <input
+                  id="inputImg"
+                  className="hidden"
+                  type="file"
+                  accept="image/png, image/gif, image/jpeg"
+                  onChange={(e) => setFileUpload(e.target.files[0])}
                 />
-                <label htmlFor="inputImg">
-                  <i className="fa-solid fa-circle-user text-[30px] text-rose-500 mx-4"></i>
-                  <input
-                    id="inputImg"
-                    className="hidden"
-                    type="file"
-                    accept="image/png, image/gif, image/jpeg"
-                    onChange={(e) => setFileUpload(e.target.files[0])}
-                  />
-                </label>
-              </div>
+              </label>
+            </div>
+            <form onSubmit={handleSubmit1(handleUpdateAccount)}>
               <div className="w-full my-4">
                 <p className="text-[20px] font-serif m-0">Username</p>
                 <input
                   className="w-full h-[33px] text-gray-500"
-                  type="text"
-                  placeholder="Safak"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  {...register1("username")}
+                  placeholder="Username"
                 />
+                <p className="p-0 m-0 ml-2 text-red-500">
+                  {errors1.username?.message}
+                </p>
               </div>
               <div className="w-full">
                 <p className="text-[20px] font-serif m-0">Email</p>
                 <input
                   className="w-full h-[33px] text-gray-500"
-                  type="text"
-                  placeholder="safak@gmail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register1("email")}
+                  placeholder="Email"
                 />
+                <p className="p-0 m-0 ml-2 text-red-500">
+                  {errors1.email?.message}
+                </p>
               </div>
-              {!activeChangePassword && (
-                <div className="w-full my-4 border-solid border-gray-400 border-[1px] p-4">
-                  <p className="text-[20px] text-red-500">
-                    Please check password before you want change password
-                  </p>
-                  <p className="text-[20px] font-serif m-0">Check password</p>
-                  <input
-                    className="w-full h-[33px] text-gray-500"
-                    type="password"
-                    placeholder="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <button
-                    onClick={handleCheckPassword}
-                    className="my-4 px-4 py-2 bg-sky-500 text-white rounded-[10px] cursor-pointer"
-                  >
-                    Check your password
-                  </button>
-                </div>
-              )}
-              {activeChangePassword && (
-                <div className="w-full my-4 border-solid border-gray-400 border-[1px] p-4">
-                  <p className="text-[20px] font-serif m-0">
-                    Input your new password
-                  </p>
 
-                  <input
-                    className="w-full h-[33px] text-gray-500"
-                    type="password"
-                    placeholder="New password "
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
-
-                  <input
-                    className="w-full h-[33px] mt-4 text-gray-500"
-                    type="password"
-                    placeholder="Confirm password"
-                    value={confirmNewPassword}
-                    onChange={(e) => setConfirmNewPassword(e.target.value)}
-                  />
-                </div>
-              )}
-          </div>
-          <div className="flex justify-center">
-            <button
-              className="bg-green-800 text-white px-8 py-2 rounded-[10px]"
-              onClick={handleUpdateAccount}
-            >
-              Update
-            </button>
+              <div className="flex justify-center">
+                <button
+                  type="submit"
+                  className="bg-green-800 text-white px-8 py-2 rounded-[10px]"
+                >
+                  Update
+                </button>
+              </div>
+            </form>
+            <form onSubmit={handleSubmit2(handleChangePassword)}>
+              <div className="">
+                <p className="text-[20px] font-serif m-0">Old Password</p>
+                <input
+                  className="w-full h-[33px] text-gray-500"
+                  type="password"
+                  placeholder="old password"
+                  {...register2("old_password")}
+                />
+                <p className="p-0 m-0 ml-2 text-red-500">
+                  {errors2.old_password?.message}
+                </p>
+              </div>
+              <div>
+                <p className="text-[20px] font-serif m-0">New password</p>
+                <input
+                  className="w-full h-[33px] text-gray-500"
+                  type="password"
+                  placeholder="New password "
+                  {...register2("new_password")}
+                />
+                <p className="p-0 m-0 ml-2 text-red-500">
+                  {errors2.new_password?.message}
+                </p>
+              </div>
+              <div>
+                <p className="text-[20px] font-serif m-0">
+                  Confirm new password
+                </p>
+                <input
+                  className="w-full h-[33px] mt-4 text-gray-500"
+                  type="password"
+                  placeholder="Confirm password"
+                  {...register2("confirm_new_password")}
+                />
+                <p className="p-0 m-0 ml-2 text-red-500">
+                  {errors2.confirm_new_password?.message}
+                </p>
+              </div>
+              <div className="w-full flex justify-center mb-8">
+                <button className="px-6 py-2 rounded-[10px] bg-green-800 text-white">
+                  Update Password
+                </button>
+              </div>
+            </form>
           </div>
         </Col>
         <Col span={7}>

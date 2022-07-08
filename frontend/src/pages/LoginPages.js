@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input, Row, Col } from "antd";
 import { pathName } from "../router/pathName";
 import { Link, useNavigate } from "react-router-dom";
@@ -17,13 +17,12 @@ const schema = yup
   .required();
 
 const LoginPages = () => {
-  const [errorEmail, setErrorEmail] = useState("");
-  const [errorPassword, setErrorPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -40,11 +39,15 @@ const LoginPages = () => {
       const res = await loginApi({ email, password });
       if (res.message) {
         if (res.component === "email") {
-          setErrorEmail(res.message);
-          setErrorPassword("");
+          setError('email',{
+            type:'custom',
+            message:res.message
+        })
         } else if (res.component === "password") {
-          setErrorEmail("");
-          setErrorPassword(res.message);
+          setError('password',{
+            type:'custom',
+            message:res.message
+          })
         }
       }
       if (res.data) {
@@ -96,7 +99,7 @@ const LoginPages = () => {
               <Col span={4}></Col>
               <Col span={20}>
                 <p className="p-0 m-0 ml-2 text-red-500">
-                  {errorEmail ? errorEmail : errors.email?.message}
+                  {errors.email?.message}
                 </p>
               </Col>
             </Row>
@@ -113,9 +116,10 @@ const LoginPages = () => {
                     name="password"
                     control={control}
                     render={({ field }) => (
-                      <Input
+                      <Input.Password
                         {...field}
                         placeholder="Password"
+                        visibilityToggle={true}
                         style={{
                           height: 45,
                           borderTopRightRadius: 10,
@@ -131,7 +135,7 @@ const LoginPages = () => {
               <Col span={4}></Col>
               <Col span={20}>
                 <p className="m-0 ml-2 text-red-500">
-                  {errorPassword ? errorPassword : errors.password?.message}
+                  {errors.password?.message}
                 </p>
               </Col>
             </Row>
