@@ -4,8 +4,8 @@ const storyController = require("../controller/story.controller");
 const { uploadCloud } = require("../configs/cloudinary.config");
 
 router.get("/all_story", storyController.getAllStory);
-router.get("/story_account/:id_account", storyController.getStoryAccount);
-router.get('/one_story/:id',storyController.getOneStory)
+router.get("/story_account/:id", storyController.getStoryAccount);
+router.get("/one_story/:id", storyController.getOneStory);
 
 router.post(
   "/add_story/:id_account",

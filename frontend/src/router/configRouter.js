@@ -5,6 +5,7 @@ import LoginPages from "../pages/LoginPages";
 import LogoutPages from "../pages/LogoutPages";
 import RegisterPages from "../pages/RegisterPages";
 import SettingPages from "../pages/SettingPages";
+import StoryAccountPages from "../pages/StoryAccountPages";
 import { pathName } from "./pathName";
 
 export const configRouter=[
@@ -17,6 +18,11 @@ export const configRouter=[
         path:pathName.createBlog,
         pages:<CreateNewPostPages/>,
         privated:true
+    },
+    {
+        path:pathName.storyAccount,
+        pages:<StoryAccountPages/>,
+        privated:false
     },
     {
         path:pathName.detailPost,

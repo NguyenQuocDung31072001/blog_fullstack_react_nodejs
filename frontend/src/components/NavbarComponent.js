@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { pathName } from "../router/pathName";
 import { useSelector } from "react-redux";
+import SearchComponent from "../components/SearchComponent"
+
 const NavigateRouter = [
   {
     path: pathName.home,
@@ -90,7 +92,7 @@ const NavbarComponent = () => {
           </Link>
           )}
           <div className="mx-2 text-[20px]">
-            <i className="fa-solid fa-magnifying-glass cursor-pointer"></i>
+            <SearchComponent/>
           </div>
         </div>
       </Col>

@@ -12,7 +12,6 @@ export const getAllstory = async () => {
 export const getStoryAccount = async (id_account) => {
   try {
     const res = await axiosConfig.get(`/story/story_account/${id_account}`);
-    console.log(res.data);
     return res.data;
   } catch (error) {
     console.log(error.message);
@@ -46,7 +45,7 @@ export const postNewStory = async ({ id_account, uploadData }) => {
   }
 };
 
-export const updateStory = async ({ id, uploadData }) => {
+export const updateStory = async (id,uploadData) => {
   try {
     const res = await axiosConfig.put(`/story/update_story/${id}`, uploadData);
     console.log(res.data);

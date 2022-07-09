@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button, Input, Row, Col } from "antd";
 import { pathName } from "../router/pathName";
 import { Link, useNavigate } from "react-router-dom";
