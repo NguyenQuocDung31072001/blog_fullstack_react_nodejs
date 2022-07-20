@@ -3,7 +3,6 @@ const { verifyTokenService } = require("../service/jwt_service");
 
 // const token = req.headers["authorization"]
 const verifyToken = async (req, res, next) => {
-  console.log("Check access token!");
   const token = req.headers["authorization"];
   const result = await verifyTokenService(token);
   if (!result.error) next();

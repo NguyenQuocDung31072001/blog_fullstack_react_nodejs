@@ -5,23 +5,19 @@ const { deleteImage } = require("../configs/cloudinary.config");
 const getAllStory = async (req, res) => {
   try {
     const allStory = await Story.find();
-    return res.json({ allStory: allStory });
+    return res.status(200).json({ code: 200, data: allStory });
   } catch (error) {
-    return res.json({ error: error.message });
+    return res.status(200).json({ code: 500, msg: error.message });
   }
 };
 const getStoryAccount = async (req, res) => {
-  console.log("params id is ", req.params.id)
   // params id
   try {
-    const story =await Story.findById(req.params.id)
-    // console.log("story is ",story)
-    const account = await Account.findById(story.author).populate(
-      "stories"
-    );
-    return res.json({ storyAccount: account });
+    const story = await Story.findById(req.params.id);
+    const account = await Account.findById(story.author).populate("stories");
+    return res.status(200).json({ code: 200, data: account });
   } catch (error) {
-    return res.json({ error: error.message });
+    return res.status(200).json({ code: 500, msg: error.message });
   }
 };
 const getOneStory = async (req, res) => {
@@ -30,20 +26,20 @@ const getOneStory = async (req, res) => {
     const story = await Story.findById(req.params.id).populate("author");
 
     // console.log("story is ", story);
-    return res.json({ story: story });
+    return res.status(200).json({ code: 200, data: story });
   } catch (error) {
-    return res.json({ error: error.message });
+    return res.status(200).json({ code: 500, msg: error.message });
   }
 };
 
 const addNewStory = async (req, res) => {
   //params id_account,  body : image, title, description, detailDescription
 
-  console.log("req params ", req.params);
-  console.log("req body ", req.body);
-  console.log("req.body.file ", req.body.file);
-  console.log("req.file.filename ", req.file.filename);
-  console.log("req.file.path ", req.file.path);
+  // console.log("req params ", req.params);
+  // console.log("req body ", req.body);
+  // console.log("req.body.file ", req.body.file);
+  // console.log("req.file.filename ", req.file.filename);
+  // console.log("req.file.path ", req.file.path);
   try {
     const newStory = new Story({
       image: req.file.path,
@@ -59,11 +55,9 @@ const addNewStory = async (req, res) => {
     const account = await Account.findById(req.params.id_account);
     account.stories.push(saveStory.id);
     await account.save();
-    console.log("account is ", account);
-    return res.status(200).json({ newStory: saveStory, account: account });
+    return res.status(200).json({ code: 200, data: saveStory });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ error: error.message });
+    return res.status(200).json({ code: 500, msg: error.message });
   }
 };
 const updateStory = async (req, res) => {
@@ -74,35 +68,36 @@ const updateStory = async (req, res) => {
       if (story.prevImage) {
         deleteImage(story.prevImage);
       }
-      console.log("req.file update is ", req.file);
       story.image = req.file.path;
       story.prevImage = req.file.filename;
       story.title = req.body.title;
       story.description = req.body.description;
       story.detailDescription = req.body.detailDescription;
       const _story = await story.save();
-      return res.json({ storyUpdate: _story });
+      return res.status(200).json({ code: 200, data: _story });
     }
     story.title = req.body.title;
     story.description = req.body.description;
     story.detailDescription = req.body.detailDescription;
     const _story = await story.save();
-    return res.json({ storyUpdate: _story });
+
+    return res.status(200).json({ code: 200, data: _story });
   } catch (error) {
-    return res.json({ error: error.message });
+    return res.status(200).json({ code: 500, msg: error.message });
   }
 };
 const deleteStory = async (req, res) => {
   //params id
   try {
     const story = await Story.findByIdAndDelete(req.params.id);
-    console.log("story is ", story);
     const account = await Account.findById(req.params.id_account);
     account.stories = account.stories.filter((id) => id != story.id);
     await account.save();
-    return res.status(200).json({ message: "delete ok" });
+    return res
+      .status(200)
+      .json({ code: 200, data: { msg: "delete success!" } });
   } catch (error) {
-    return res.json({ error: error.message });
+    return res.status(200).json({ code: 500, msg: error.message });
   }
 };
 

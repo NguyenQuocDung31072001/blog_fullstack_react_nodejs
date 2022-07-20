@@ -61,17 +61,17 @@ const RegisterPages = () => {
     }
     ;(async function(){
       const result=await registerApi(data.username,data.email,data.password)
-      if(result.status==='email'){
+      if(result.code===501){
         setError('email',{
           type:'custom',
-          message:result.message
+          message:result.data.msg
         })
         return
       }
-      if(result.status==='ok'){
+      if(result.code===200){
         navigate('/login')
       }
-      if(result.status==='error'){
+      if(result.code===500){
         openNotification('error','Notification message','register error!')
       }
     })()

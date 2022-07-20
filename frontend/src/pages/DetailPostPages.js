@@ -8,6 +8,8 @@ import { useSelector } from "react-redux";
 import ComfirmUpdateComponent from "../components/ComfirmUpdateComponent";
 import ConfirmDeleteStoryComponent from "../components/ConfirmDeleteStoryComponent";
 import { useNavigate } from "react-router-dom";
+import {withErrorBoundary} from "react-error-boundary"
+import ErrorComponent from "../components/ErrorComponent";
 
 const DetailPostPages = () => {
   const currentUser = useSelector((state) => state.account);
@@ -25,9 +27,9 @@ const DetailPostPages = () => {
     window.scrollTo(0, 0);
     (async function () {
       const result = await getOneStory(id, currentUser.id);
-      setData(result.story);
-      setTitle(result.story.title);
-      setDescription(result.story.detailDescription);
+      setData(result.data);
+      setTitle(result.data.title);
+      setDescription(result.data.detailDescription);
     })();
   }, []);
   const dontSaveUpdate = () => {
@@ -174,4 +176,6 @@ const DetailPostPages = () => {
   );
 };
 
-export default DetailPostPages;
+export default withErrorBoundary(DetailPostPages,{
+  FallbackComponent:ErrorComponent
+});

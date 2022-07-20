@@ -31,8 +31,7 @@ const CreateNewPostPages = () => {
         id_account,
         uploadData
       });
-      navigate(pathName.detailPost_Name+res.newStory._id)
-      console.log(res);
+      navigate(pathName.detailPost_Name+res.data._id)
     })();
   };
   return (

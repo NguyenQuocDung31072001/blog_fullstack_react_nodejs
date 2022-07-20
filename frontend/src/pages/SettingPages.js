@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { Row, Col } from "antd";
 import AboutComponent from "../components/AboutComponent";
-import { updateAccountApi, changePasswordApi } from "../api/account.apiRequest";
 import { useSelector, useDispatch } from "react-redux";
-import { update } from "../redux/accountSlices";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { openNotification } from "../util/Notification.util";
+import { updateAccountApi, changePasswordApi } from "../api/account.apiRequest";
+import { update } from "../redux/accountSlices";
+import {withErrorBoundary} from "react-error-boundary"
+import ErrorComponent from "../components/ErrorComponent";
+
 const schema1 = yup
   .object({
     username: yup.string().required(),
@@ -64,10 +67,10 @@ const SettingPages = () => {
       console.log("data update ", dataUpdate);
 
       const dataUpdateRedux = {
-        id: dataUpdate._id,
-        avatar_url: dataUpdate.avatar,
-        username: dataUpdate.username,
-        email: dataUpdate.email,
+        id: dataUpdate.data._id,
+        avatar_url: dataUpdate.data.avatar,
+        username: dataUpdate.data.username,
+        email: dataUpdate.data.email,
       };
       dispatch(update(dataUpdateRedux));
     })();
@@ -97,15 +100,15 @@ const SettingPages = () => {
         old_password,
         new_password,
       });
-      if (result.status === "old_password") {
-        let message=result.message
+      if (result.code === 404) {
+        let message=result.msg
         setError2('old_password',{
           type:"custom",
           message:message
         })
         return
       }
-      if(result.status==='ok'){
+      if(result.code===200){
         openNotification('success','Notification message!','You change password successfully!')
       }
       setValue2('old_password','')
@@ -231,4 +234,6 @@ const SettingPages = () => {
   );
 };
 
-export default SettingPages;
+export default withErrorBoundary(SettingPages,{
+  FallbackComponent:ErrorComponent
+});

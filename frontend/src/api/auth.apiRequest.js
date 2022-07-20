@@ -3,7 +3,7 @@ import axiosConfig from "../config/axiosConfig";
 export const registerApi = async (username, email, password) => {
   try {
     const res = await axiosConfig.post("/auth/register", {
-      username:username,
+      username: username,
       email: email,
       password: password,
     });
@@ -18,7 +18,6 @@ export const loginApi = async ({ email, password }) => {
       email: email,
       password: password,
     });
-    console.log("res : ", res);
     return res.data;
   } catch (error) {
     console.log(error.message);

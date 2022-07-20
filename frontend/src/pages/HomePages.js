@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "antd";
+import { withErrorBoundary } from "react-error-boundary";
 import PostComponent from "../components/PostComponent";
 import AboutComponent from "../components/AboutComponent";
+import ErrorComponent from "../components/ErrorComponent";
 import { getAllstory } from "../api/story.apiRequest";
-
 const HomePages = () => {
   const [data, setData] = useState([]);
-  useEffect(()=>{
-    (async function(){
-      const allStory=await getAllstory()
-      setData(allStory.allStory)
-    })()
-  },[])
+  useEffect(() => {
+    (async function () {
+      const allStory = await getAllstory();
+      setData(allStory.data);
+    })();
+  }, []);
   return (
     <div>
       <header className="mt-[60px] mb-[15px] w-full h-[539px]  flex flex-col justify-end items-center relative">
@@ -33,18 +34,19 @@ const HomePages = () => {
         <Row>
           <Col className="" span={16}>
             <div className="flex flex-wrap">
-              {data.length>0 && data.map((d, index) => {
-                return (
-                  <PostComponent
-                    key={index}
-                    id={d._id}
-                    image={d.image}
-                    title={d.title}
-                    time={d.updatedAt}
-                    description={d.description}
-                  />
-                );
-              })}
+              {data.length > 0 &&
+                data.map((d, index) => {
+                  return (
+                    <PostComponent
+                      key={index}
+                      id={d._id}
+                      image={d.image}
+                      title={d.title}
+                      time={d.updatedAt}
+                      description={d.description}
+                    />
+                  );
+                })}
             </div>
           </Col>
           <Col className="mt-8" span={8}>
@@ -56,4 +58,6 @@ const HomePages = () => {
   );
 };
 
-export default HomePages;
+export default withErrorBoundary(HomePages, {
+  FallbackComponent: ErrorComponent,
+});

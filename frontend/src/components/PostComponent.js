@@ -1,8 +1,11 @@
 import React from "react";
 import { pathName } from "../router/pathName";
 import { Link } from "react-router-dom";
+import {withErrorBoundary} from "react-error-boundary"
+import ErrorComponent from "./ErrorComponent";
 
 const PostComponent = ({ id, image, title, time, description }) => {
+
   return (
     <div className="w-[385px] mx-6 my-2 flex flex-col items-center">
       <img className="w-full h-[280px] object-cover" src={image} alt="" />
@@ -15,4 +18,6 @@ const PostComponent = ({ id, image, title, time, description }) => {
   );
 };
 
-export default PostComponent;
+export default withErrorBoundary(PostComponent,{
+  FallbackComponent:ErrorComponent
+});

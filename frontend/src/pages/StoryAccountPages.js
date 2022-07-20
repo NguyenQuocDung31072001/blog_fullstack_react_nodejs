@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getStoryAccount } from "../api/story.apiRequest";
 import PostComponent from "../components/PostComponent";
+import {withErrorBoundary} from "react-error-boundary"
+import ErrorComponent from "../components/ErrorComponent";
 
 const StoryAccountPages = () => {
   const { id } = useParams();
@@ -10,8 +12,8 @@ const StoryAccountPages = () => {
   useEffect(() => {
     ;(async function () {
       const result = await getStoryAccount(id);
-      setData(result.storyAccount.stories);
-      setUsername(result.storyAccount.username);
+      setData(result.data.stories);
+      setUsername(result.data.username);
     })();
   }, []);
 
@@ -39,4 +41,6 @@ const StoryAccountPages = () => {
   );
 };
 
-export default StoryAccountPages;
+export default withErrorBoundary(StoryAccountPages,{
+  FallbackComponent:ErrorComponent
+});

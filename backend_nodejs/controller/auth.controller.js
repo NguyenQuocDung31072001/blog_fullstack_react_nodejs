@@ -14,7 +14,9 @@ const register = async (req, res) => {
     const validAccount = await Account.findOne({ email: req.body.email });
 
     if (validAccount) {
-      return res.json({ message: "email was singin", status: "email" });
+      return res
+        .status(200)
+        .json({ code: 501, data: { msg: "email exited!" } });
     }
     const _hash = await bcrypt.hash(req.body.password, saltRounds);
 
@@ -26,23 +28,22 @@ const register = async (req, res) => {
 
     await account.save();
 
-    return res.status(200).json({ code: 200, msg: "success" });
+    return res.status(200).json({ code: 200, msg: "register success" });
   } catch (error) {
-    return res.status(200).json({ code: 404, msg: error.message });
+    return res.status(200).json({ code: 500, msg: error.message });
   }
 };
 
 const login = async (req, res) => {
-  console.log(req.body)
   //email,password
   try {
     const account = await Account.findOne({ email: req.body.email });
     if (!account) {
-      return res.status(200).json({code:404, msg: "email invalid!" });
+      return res.status(200).json({ code: 404, msg: "email invalid!" });
     }
     const hash = await bcrypt.compare(req.body.password, account.password);
     if (!hash) {
-      return res.status(200).json({code:404, msg: "wrong password" });
+      return res.status(200).json({ code: 404, msg: "wrong password" });
     }
     const accessToken = generateAccessToken(account._id);
     const refreshToken = generateRefreshToken(account._id);
@@ -51,7 +52,7 @@ const login = async (req, res) => {
     return res.status(200).json({
       code: 200,
       msg: "success",
-      data: { ...account._doc, accessToken, refreshToken },
+      data: { ...account._doc, accessToken },
     });
   } catch (error) {
     return res.status(200).json({ code: 404, msg: error.message });
@@ -65,10 +66,8 @@ const logout = async (req, res) => {
 };
 const refreshToken = async (req, res) => {
   try {
-    const refreshToken =await redisClient.get("refresh_token");
-    // console.log("old___refreshToken :::: ",refreshToken)
+    const refreshToken = await redisClient.get("refresh_token");
     const decodedToken = await verifyTokenService(refreshToken);
-    // console.log("decodedToken : ", decodedToken);
 
     const newAccessToken = generateAccessToken(decodedToken.id);
     const newRefreshToken = generateRefreshToken(decodedToken.id);
@@ -76,15 +75,13 @@ const refreshToken = async (req, res) => {
     req.headers["authorization"] = newAccessToken;
     redisClient.set("refresh_token", newRefreshToken);
 
-    return res
-      .status(200)
-      .json({
-        code: 200,
-        msg: "success",
-        data: { newAccessToken, newRefreshToken },
-      });
+    return res.status(200).json({
+      code: 200,
+      msg: "success",
+      data: { newAccessToken },
+    });
   } catch (error) {
-    return res.status(200).json({code:500,msg:error.message})
+    return res.status(200).json({ code: 500, msg: error.message });
   }
 };
 
