@@ -5,7 +5,7 @@ const body_parser = require("body-parser");
 const authRouter=require('./router/auth.router')
 const accountRouter = require("./router/account.router");
 const storyRouter = require("./router/story.router");
-require('./helpers/connections_redis')
+// require('./helpers/connections_redis')
 require("./helpers/connections_mongoose")
 
 const app = express();

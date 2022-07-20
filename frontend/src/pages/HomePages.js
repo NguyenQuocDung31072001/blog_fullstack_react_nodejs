@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "antd";
-import dataPost from "../data/postData.json";
 import PostComponent from "../components/PostComponent";
 import AboutComponent from "../components/AboutComponent";
 import { getAllstory } from "../api/story.apiRequest";

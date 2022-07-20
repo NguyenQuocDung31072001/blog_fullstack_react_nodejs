@@ -2,7 +2,7 @@ import axiosConfig from "../config/axiosConfig";
 
 export const registerApi = async (username, email, password) => {
   try {
-    const res = await axiosConfig.post("/account/register", {
+    const res = await axiosConfig.post("/auth/register", {
       username:username,
       email: email,
       password: password,
@@ -13,13 +13,20 @@ export const registerApi = async (username, email, password) => {
   }
 };
 export const loginApi = async ({ email, password }) => {
-  console.log("data is ", email, password);
   try {
-    const res = await axiosConfig.post("/account/login", {
+    const res = await axiosConfig.post("/auth/login", {
       email: email,
       password: password,
     });
-    console.log("res : ", res.data);
+    console.log("res : ", res);
+    return res.data;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+export const refreshTokenApi = async () => {
+  try {
+    const res = await axiosConfig.post("/auth/refresh_token");
     return res.data;
   } catch (error) {
     console.log(error.message);

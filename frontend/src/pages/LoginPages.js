@@ -37,26 +37,27 @@ const LoginPages = () => {
       let email = data.email;
       let password = data.password;
       const res = await loginApi({ email, password });
-      if (res.message) {
-        if (res.component === "email") {
-          setError('email',{
-            type:'custom',
-            message:res.message
+      console.log("res is ",res)
+      if(res.msg==='email invalid!'){
+        setError('email',{
+          type:'custom',
+          message:res.message
+      })
+      }
+      else if(res.msg==='wrong password'){
+        setError('password',{
+          type:'custom',
+          message:res.message
         })
-        } else if (res.component === "password") {
-          setError('password',{
-            type:'custom',
-            message:res.message
-          })
-        }
       }
       if (res.data) {
         const dataSaveRedux = {
           id: res.data._id,
           username: res.data.username,
           email: res.data.email,
-          avatar_url: res.data.avatar,
+          avatar_url: res.data.avatar        
         };
+        window.localStorage.setItem('accessToken',res.data.accessToken)
         dispatch(login(dataSaveRedux));
         navigate("/");
       }

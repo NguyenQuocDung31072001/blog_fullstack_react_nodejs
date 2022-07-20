@@ -2,8 +2,11 @@ import axiosConfig from "../config/axiosConfig";
 
 export const getAllstory = async () => {
   try {
-    const res = await axiosConfig.get("/story/all_story");
-    console.log(res.data);
+    const res = await axiosConfig.get("/story/all_story", {
+      headers: {
+        authorization: window.localStorage.getItem('accessToken'),
+      },
+    });
     return res.data;
   } catch (error) {
     console.log(error.message);
@@ -45,7 +48,7 @@ export const postNewStory = async ({ id_account, uploadData }) => {
   }
 };
 
-export const updateStory = async (id,uploadData) => {
+export const updateStory = async (id, uploadData) => {
   try {
     const res = await axiosConfig.put(`/story/update_story/${id}`, uploadData);
     console.log(res.data);
