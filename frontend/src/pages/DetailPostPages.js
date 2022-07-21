@@ -1,7 +1,7 @@
 import { Col, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import { pathName } from "../router/pathName";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import AboutComponent from "../components/AboutComponent";
 import { deleteStory, getOneStory, updateStory } from "../api/story.apiRequest";
 import { useSelector } from "react-redux";
@@ -31,7 +31,8 @@ const DetailPostPages = () => {
       setTitle(result.data.title);
       setDescription(result.data.detailDescription);
     })();
-  }, []);
+  }, [id]);
+
   const dontSaveUpdate = () => {
     setOpenModalConfirmUpdate(false);
     setEdit(false);

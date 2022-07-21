@@ -5,9 +5,9 @@ const { confirm } = Modal;
 
 const showConfirm = ({ handleCancel, handleUpdate }) => {
   confirm({
-    title: "Do you want to delete some change?",
+    title: "Do you want to save?",
     icon: <ExclamationCircleOutlined />,
-    content: "Please click ok if you want update and cancel if you want delete change!",
+    content: "Please click ok if you want save new change!",
 
     onOk() {
       handleUpdate();

@@ -19,7 +19,19 @@ export const getStoryAccount = async (id_account) => {
 export const getOneStory = async (id) => {
   try {
     const res = await axiosConfig.get(`/story/one_story/${id}`);
-    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+export const searchStoryByName = async (searchName) => {
+  try {
+    const res = await axiosConfig.post(
+      `/story/search_by_name`,
+      {
+        searchName:searchName
+      },
+    );
     return res.data;
   } catch (error) {
     console.log(error.message);

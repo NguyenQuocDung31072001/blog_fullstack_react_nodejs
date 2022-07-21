@@ -8,6 +8,8 @@ router.get("/all_story", storyController.getAllStory);
 router.get("/story_account/:id", storyController.getStoryAccount);
 router.get("/one_story/:id", storyController.getOneStory);
 
+router.post("/search_by_name", storyController.searchStoryByName);
+
 router.post(
   "/add_story/:id_account",
   verifyToken,

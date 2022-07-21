@@ -31,15 +31,21 @@ const getOneStory = async (req, res) => {
     return res.status(200).json({ code: 500, msg: error.message });
   }
 };
+const searchStoryByName = async (req, res) => {
+  // req.body : searchName
+  try {
+    const story = await Story.find();
+    const storyResult=story.filter(v=>v.title.includes(req.body.searchName))
+    // console.log("story is ", story);
+    return res.status(200).json({ code: 200, data: storyResult });
+  } catch (error) {
+    return res.status(200).json({ code: 500, msg: error.message });
+  }
+};
 
 const addNewStory = async (req, res) => {
   //params id_account,  body : image, title, description, detailDescription
 
-  // console.log("req params ", req.params);
-  // console.log("req body ", req.body);
-  // console.log("req.body.file ", req.body.file);
-  // console.log("req.file.filename ", req.file.filename);
-  // console.log("req.file.path ", req.file.path);
   try {
     const newStory = new Story({
       image: req.file.path,
@@ -108,4 +114,5 @@ module.exports = {
   addNewStory,
   updateStory,
   deleteStory,
+  searchStoryByName
 };

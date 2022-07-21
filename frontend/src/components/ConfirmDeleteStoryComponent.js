@@ -1,13 +1,13 @@
 import React from 'react';
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Button, Modal, Space } from "antd";
+import {Modal} from "antd";
 const { confirm } = Modal;
 
 const showConfirm = ({ handleCancel, handleUpdate }) => {
   confirm({
-    title: "Do you want to delete some change?",
+    title: "Do you want to delete your post?",
     icon: <ExclamationCircleOutlined />,
-    content: "Please click ok if you want update and cancel if you want delete change!",
+    content: "Please click ok to delete!",
 
     onOk() {
       handleUpdate();
