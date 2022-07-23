@@ -10,6 +10,7 @@ import ConfirmDeleteStoryComponent from "../components/ConfirmDeleteStoryCompone
 import { useNavigate } from "react-router-dom";
 import {withErrorBoundary} from "react-error-boundary"
 import ErrorComponent from "../components/ErrorComponent";
+import CommentComponent from "../components/CommentComponent";
 
 const DetailPostPages = () => {
   const currentUser = useSelector((state) => state.account);
@@ -173,6 +174,11 @@ const DetailPostPages = () => {
           </Col>
         </Row>
       )}
+      <Row>
+        <Col className="" span={17}>
+          <CommentComponent/>
+        </Col>
+      </Row>
     </div>
   );
 };
