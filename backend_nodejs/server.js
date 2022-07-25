@@ -5,6 +5,7 @@ const body_parser = require("body-parser");
 const authRouter=require('./router/auth.router')
 const accountRouter = require("./router/account.router");
 const storyRouter = require("./router/story.router");
+const commentRouter=require('./router/comment.router')
 // require('./helpers/connections_redis')
 require("./helpers/connections_mongoose")
 
@@ -18,6 +19,7 @@ app.use(body_parser.json());
 app.use("/v1/api/auth", authRouter);
 app.use("/v1/api/account", accountRouter);
 app.use("/v1/api/story", storyRouter);
+app.use("/v1/api/comment", commentRouter);
 
 app.listen(PORT, () => {
   console.log(`server stared at port ${PORT}`);

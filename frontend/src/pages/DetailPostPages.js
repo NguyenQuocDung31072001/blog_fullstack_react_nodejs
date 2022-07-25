@@ -56,7 +56,7 @@ const DetailPostPages = () => {
     }
     (async function () {
       const dataUpdate = await updateStory(id, uploadData);
-      console.log("dataUpdate : ", dataUpdate);
+      // console.log("dataUpdate : ", dataUpdate);
     })();
   };
   const handleFormUpdate = () => {
@@ -176,7 +176,7 @@ const DetailPostPages = () => {
       )}
       <Row>
         <Col className="" span={17}>
-          <CommentComponent/>
+          <CommentComponent author={data?.author?.username}/>
         </Col>
       </Row>
     </div>
