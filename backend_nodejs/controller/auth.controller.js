@@ -65,6 +65,7 @@ const logout = async (req, res) => {
   }
 };
 const refreshToken = async (req, res) => {
+  console.log("refresh token !!!!!!!!!!!!!!!!")
   try {
     const refreshToken = await redisClient.get("refresh_token");
     const decodedToken = await verifyTokenService(refreshToken);

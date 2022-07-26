@@ -22,6 +22,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^2.0.18",
     "redis": "^4.2.0",
-    "redis-commander": "^0.8.0"
+    "redis-commander": "^0.8.0",
+    "socket.io": "^4.5.1"
   }
 }

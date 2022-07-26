@@ -47,7 +47,7 @@ export const updateComment = async (id_comment, comment) => {
 export const deleteComment = async (id_comment) => {
   try {
     const res = await axiosConfig.delete(
-      `/comment/update_comment/${id_comment}`,
+      `/comment/delete_comment/${id_comment}`,
       {
         headers: {
           authorization: window.localStorage.getItem("accessToken"),

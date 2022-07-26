@@ -8,154 +8,137 @@ import {
   updateComment,
   deleteComment,
 } from "../api/comment.apiRequest";
+import { Row, Col } from "antd";
 import { useParams } from "react-router-dom";
+import CommentFormComponent from "./CommentFormComponent";
 
-const CommentComponent = ({author}) => {
+const CommentComponent = ({ author }) => {
   const currentUser = useSelector((state) => state.account);
   const { id } = useParams();
   const [menu, setMenu] = useState("write"); //write/preview
-  const [comment, setComment] = useState("");
   const [allComment, setAllComment] = useState([]);
+  const [idCommentUpdate, setIdCommentUpdate] = useState("");
 
   useEffect(() => {
-    (async function () {
-      const result = await getAllComment(id);
-      console.log(result);
-      setAllComment(result.data);
-    })();
+    handleGetAllComment();
   }, []);
 
-  const handleCreateNewComment = () => {
-    //id_account: currentUser.id, id_story:id
-    (async function () {
-      const result = await createNewComment(id, currentUser.id, comment);
-      console.log("result is ::: ", result);
-    })();
+  const handleGetAllComment = async () => {
+    const result = await getAllComment(id);
+    // console.log(result);
+    setAllComment(result.data);
   };
-  const handleUpdateComment = (id_comment) => {
+
+  const handleCreateNewComment = (comment) => {
+    if (comment) {
+      (async function () {
+        await createNewComment(id, currentUser.id, comment);
+        await handleGetAllComment();
+      })();
+    }
+  };
+  const handleUpdateComment = (id_comment, newComment) => {
     (async function () {
-      const result = await updateComment(id_comment, comment);
-      console.log("result is ::: ", result);
+      await updateComment(id_comment, newComment);
     })();
+    setIdCommentUpdate("");
   };
   const handleDeleteComment = (id_comment) => {
     (async function () {
-      const result = await deleteComment(id_comment);
-      console.log("result is ::: ", result);
+      await deleteComment(id_comment);
+      await handleGetAllComment();
     })();
   };
   return (
     <div className="w-full">
-      <p className="text-xl text-gray-600 font-medium">Comment</p>
+      <p className="text-xl text-gray-600 font-bold">Comment</p>
       {!currentUser?.id && (
         <div className="w-full h-[60px] flex items-center justify-center border-2 border-solid border-gray-500">
           Please login to comment!
         </div>
       )}
       {currentUser?.id && (
-        <div className="w-full my-4 border-2 border-solid border-gray-500">
-          <div className="flex border-b-[1px] border-gray-500">
-            <p
-              className="p-2 ml-4 cursor-pointer"
-              onClick={() => setMenu("write")}
-            >
-              Write
-            </p>
-            <p
-              className="p-2 cursor-pointer"
-              onClick={() => setMenu("preview")}
-            >
-              Preview
-            </p>
-          </div>
-
-          <div className="mt-4">
-            {menu === "write" && (
-              <div className="flex ">
-                <img
-                  src={currentUser.avatar_url}
-                  alt=""
-                  className="w-[50px] h-[50px] rounded-[50%] object-cover m-2 ml-4"
-                />
-                <div className="w-full ">
-                  <textarea
-                    className="border-[1px] border-gray-500 p-2"
-                    placeholder="Write your post ..."
-                    rows="5"
-                    cols="140"
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                  ></textarea>
-                </div>
-              </div>
-            )}
-            {menu === "preview" && (
-              <div className="flex ">
-                <img
-                  src={currentUser.avatar_url}
-                  alt=""
-                  className="w-[50px] h-[50px] rounded-[50%] object-cover m-2 ml-4"
-                />
-                <div className="w-full ">
-                  <textarea
-                    className="border-[1px] border-gray-500 p-2"
-                    placeholder="Write your post ..."
-                    rows="5"
-                    cols="140"
-                    value={comment}
-                    disabled={true}
-                  ></textarea>
-                </div>
-              </div>
-            )}
-            <div className="w-full flex justify-end ">
-              <button
-                className="bg-sky-500 rounded-[2px] px-4 py-2 m-4 mr-14 text-white"
-                onClick={handleCreateNewComment}
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
+        <CommentFormComponent
+          id_component=""
+          id_active=""
+          menu={menu}
+          setMenu={setMenu}
+          prevComment=""
+          handleCreateNewComment={handleCreateNewComment}
+          handleUpdateComment={handleUpdateComment}
+        />
       )}
       {allComment?.length > 0 && (
         <div>
-          <p>All comment</p>
+          <p className="text-xl text-gray-600 font-bold">All comment</p>
         </div>
       )}
-      {allComment?.length > 0 &&
-        allComment.map((v, i) => {
-          return (
-            <div key={v._id} className="w-full flex justify-between">
-              <div className="w-[100px]">
-              {author===currentUser.username && <p>Tac gia</p>}
-                <img
-                  src={v.id_account.avatar}
-                  alt=""
-                  className="w-[50px] h-[50px] object-cover rounded-[50%]"
-                />
-                <p>{v.updatedAt.split(["T"])[0]}</p>
-                
-              </div>
-              <div className="w-full ">
-                <p>{v.comment}</p>
-              </div>
-              <div className="w-[300px]">
-                {v.id_account._id === currentUser.id && (
-                  <div>
-                    <button className="bg-green-500 px-4 py-2 rounded-[5px] text-white mx-8">
-                      update
-                    </button>
-                    <button className="bg-red-500 px-4 py-2 rounded-[5px] text-white">
-                      delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+      <div>
+        {allComment?.length > 0 && (
+          <div className="border-[1px] border-gray-500 px-4 py-2 ">
+            {allComment.map((v, i) => {
+              return (
+                <div
+                  key={v._id}
+                  className="border-b-[1px] border-gray-500 last:border-b-0"
+                >
+                  <Row>
+                    <Col span={7} className="">
+                      {author === currentUser.username && (
+                        <p className="p-0 m-0 ml-4">Tac gia</p>
+                      )}
+                      <div className="flex items-center">
+                        <img
+                          src={v.id_account.avatar}
+                          alt=""
+                          className="w-[50px] h-[50px] object-cover rounded-[50%] ml-4 mr-4"
+                        />
+                        <div className="">
+                          <div className="flex ">
+                            <p className="text-blue-400 p-0 m-0">
+                              {v.id_account.username}
+                            </p>
+                            <p className="ml-[1px] p-0 m-0">
+                              {v.id_account.email}
+                            </p>
+                          </div>
+                          <span className="p-0 m-0">
+                            {v.updatedAt.split(["T"])[0]}
+                          </span>
+                          {v.id_account._id === currentUser.id && (
+                            <span>
+                              <i
+                                className="fa-solid fa-pen-to-square text-gray-500 mx-2 cursor-pointer"
+                                onClick={() => setIdCommentUpdate(v._id)}
+                              ></i>
+                              <i
+                                className="fa-solid fa-trash-can text-gray-500 cursor-pointer"
+                                onClick={() => handleDeleteComment(v._id)}
+                              ></i>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={24}>
+                      <CommentFormComponent
+                        id_component={v._id}
+                        id_active={idCommentUpdate}
+                        menu={menu}
+                        setMenu={setMenu}
+                        prevComment={v.comment}
+                        handleUpdateComment={handleUpdateComment}
+                      />
+                    </Col>
+                  </Row>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -31,7 +31,6 @@ const createNewComment = async (req, res) => {
         comment:req.body.comment
     })
     await newComment.save()
-    console.log(`newComment ::: ${newComment}`)
     return res
       .status(200)
       .json({ code: 200, msg: "create new comment success", data: newComment });
@@ -47,7 +46,6 @@ const updateComment = async (req, res) => {
     const commentUpdate=await Comment.findById(req.params.id_comment)
     commentUpdate.comment=req.body.comment
     await commentUpdate.save()
-    console.log(`commentUpdate ::: ${commentUpdate}`)
     return res
       .status(200)
       .json({ code: 200, msg: "update comment success", data: commentUpdate });
