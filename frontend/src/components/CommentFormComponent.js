@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 const CommentFormComponent = ({
   id_component,
   id_active,
+  setIdCommentUpdate,
   menu,
   setMenu,
   prevComment,
@@ -12,7 +13,7 @@ const CommentFormComponent = ({
 }) => {
   const currentUser = useSelector((state) => state.account);
   const [comment, setComment] = useState(prevComment);
-  
+
   return (
     <div>
       {!id_component && (
@@ -82,7 +83,6 @@ const CommentFormComponent = ({
               Preview
             </p>
           </div>
-
           <div className="mt-4">
             <div className="flex ">
               <img
@@ -104,6 +104,15 @@ const CommentFormComponent = ({
             </div>
 
             <div className="w-full flex justify-end ">
+              <button
+                className="bg-gray-500 rounded-[2px] px-4 py-2 m-4 text-white"
+                onClick={() => {
+                  setComment(prevComment);
+                  setIdCommentUpdate("");
+                }}
+              >
+                Cancel
+              </button>
               <button
                 className="bg-sky-500 rounded-[2px] px-4 py-2 m-4 mr-14 text-white"
                 onClick={() => handleUpdateComment(id_component, comment)}

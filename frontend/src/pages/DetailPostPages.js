@@ -25,7 +25,11 @@ const DetailPostPages = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
     (async function () {
       const result = await getOneStory(id, currentUser.id);
       setData(result.data);
@@ -56,7 +60,6 @@ const DetailPostPages = () => {
     }
     (async function () {
       const dataUpdate = await updateStory(id, uploadData);
-      // console.log("dataUpdate : ", dataUpdate);
     })();
   };
   const handleFormUpdate = () => {

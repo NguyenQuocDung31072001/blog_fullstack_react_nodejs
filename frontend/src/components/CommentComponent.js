@@ -126,6 +126,7 @@ const CommentComponent = ({ author }) => {
                       <CommentFormComponent
                         id_component={v._id}
                         id_active={idCommentUpdate}
+                        setIdCommentUpdate={setIdCommentUpdate}
                         menu={menu}
                         setMenu={setMenu}
                         prevComment={v.comment}

@@ -29,7 +29,6 @@ const accountSlice = createSlice({
       state.email = "";
       state.avatar_url = "";
     },
-
   },
 });
 export const { login, update, logout,refreshToken } = accountSlice.actions;
